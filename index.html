@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>事故報告アプリ リーフレット</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=BIZ+UDPGothic:wght@400;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --ink:     #0D1B2A;
+  --navy:    #1A2840;
+  --blue:    #1B4F8A;
+  --red:     #B03020;
+  --red-lt:  #FDF0EE;
+  --orange:  #C0580A;
+  --orange-lt:#FFF3E8;
+  --teal:    #0E7070;
+  --teal-lt: #E6F4F4;
+  --green:   #1A6A40;
+  --gold:    #A07810;
+  --gold-lt: #FEF9E7;
+  --purple:  #5A2D8A;
+  --paper:   #F5F4F2;
+  --rule:    #C8C4BC;
+  --white:   #FFFFFF;
+
+  /* 影響レベルカラー */
+  --lv0: #888888;
+  --lv1: #27AE60;
+  --lv2: #F5A623;
+  --lv3: #E8302A;
+  --lv4: #8E44AD;
+  --lv5: #1A1A1A;
+}
+
+body {
+  font-family: 'BIZ UDPGothic', 'Noto Sans JP', sans-serif;
+  background: #A8A8A8;
+  color: var(--ink);
+  width: 210mm;
+  margin: 0 auto;
+}
+
+/* ── HEADER ── */
+header { background: var(--navy); position: relative; overflow: hidden; padding: 0; }
+.hdr-stripe {
+  height: 6px;
+  background: linear-gradient(90deg,
+    #888888  0%   14%,
+    #27AE60 14%   28%,
+    #F5A623 28%   42%,
+    #E8302A 42%   57%,
+    #C0392B 57%   71%,
+    #8E44AD 71%   85%,
+    #1A1A1A 85%  100%
+  );
+}
+.hdr-body {
+  padding: 20px 32px 16px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  position: relative; z-index: 1;
+}
+.hdr-body::before {
+  content: '⚠';
+  position: absolute; font-size: 240px;
+  color: rgba(255,255,255,0.025);
+  right: 10px; top: -30px; line-height: 1;
+  pointer-events: none;
+}
+.hdr-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px; letter-spacing: 3.5px;
+  color: #F5A070; text-transform: uppercase; margin-bottom: 6px;
+}
+.hdr-title {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 34px; font-weight: 900;
+  color: white; line-height: 1.1; letter-spacing: -1px;
+}
+.hdr-title span { color: #F5A070; }
+.hdr-sub { color: rgba(255,255,255,0.55); font-size: 12px; margin-top: 7px; }
+.hdr-right { text-align: right; flex-shrink: 0; }
+.version-tag {
+  background: var(--red);
+  color: white; font-family: 'Oswald', sans-serif;
+  font-size: 13px; letter-spacing: 2px;
+  padding: 4px 14px; border-radius: 3px;
+  display: inline-block; margin-bottom: 8px;
+}
+.score-badges { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+.score-badge {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+  font-size: 10px; padding: 3px 10px;
+  border-radius: 3px; letter-spacing: 0.5px;
+}
+
+/* ── HERO BAND ── */
+.hero-band {
+  background: var(--red);
+  padding: 10px 32px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-band-text { font-size: 13px; font-weight: 700; color: white; line-height: 1.5; }
+.hero-band-text strong { font-size: 15px; display: block; }
+.hero-icon { font-size: 26px; flex-shrink: 0; }
+
+/* ── BODY ── */
+.body-wrap {
+  background: var(--paper);
+  padding: 22px 26px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── SECTION TITLES ── */
+.sec-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--navy);
+  border-bottom: 2px solid var(--navy);
+  padding-bottom: 5px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 7px;
+}
+.sec-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+
+/* ── CARD ── */
+.card {
+  background: white; border-radius: 6px; padding: 14px 16px;
+  box-shadow: 0 1px 8px rgba(13,27,42,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+/* ── TARGET ── */
+.target-wrap { grid-column: 1 / 3; }
+.target-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.target-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: #F2EFEC; border-radius: 6px;
+  padding: 11px 12px; border-left: 4px solid var(--red);
+}
+.target-item.b { border-left-color: var(--teal); background: var(--teal-lt); }
+.target-item.c { border-left-color: var(--green); background: #EAF5EE; }
+.t-emoji { font-size: 24px; flex-shrink: 0; line-height: 1; margin-top: 1px; }
+.t-head { font-size: 12.5px; font-weight: 700; color: var(--navy); margin-bottom: 3px; line-height: 1.5; }
+.t-head em { font-style: normal; color: var(--red); }
+.t-desc { font-size: 10.5px; color: #555; line-height: 1.6; }
+
+/* ── LEVEL TABLE ── */
+.level-wrap { grid-column: 1 / 2; }
+.level-list { display: flex; flex-direction: column; gap: 5px; }
+.lv {
+  display: flex; align-items: stretch;
+  border-radius: 5px; overflow: hidden;
+  border: 1.5px solid rgba(0,0,0,0.07);
+}
+.lv-badge {
+  width: 52px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700;
+  color: white; text-align: center; padding: 6px 4px; line-height: 1.3;
+}
+.lv-body {
+  flex: 1; padding: 6px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: white;
+}
+.lv-name { font-size: 11.5px; font-weight: 700; color: var(--navy); }
+.lv-desc { font-size: 9.5px; color: #666; margin-top: 1px; }
+.lv-action { font-size: 9.5px; font-weight: 700; text-align: right; white-space: nowrap; padding-left: 6px; }
+
+.lv0 .lv-badge { background: var(--lv0); }
+.lv0 .lv-action { color: var(--lv0); }
+.lv1 .lv-badge { background: var(--lv1); }
+.lv1 .lv-action { color: var(--lv1); }
+.lv2 .lv-badge { background: var(--lv2); }
+.lv2 .lv-action { color: var(--lv2); }
+.lv3a .lv-badge { background: var(--lv3); }
+.lv3a .lv-action { color: var(--lv3); }
+.lv3b .lv-badge { background: #9B2335; }
+.lv3b .lv-action { color: #9B2335; }
+.lv4 .lv-badge { background: var(--lv4); }
+.lv4 .lv-action { color: var(--lv4); }
+.lv5 .lv-badge { background: var(--lv5); }
+.lv5 .lv-action { color: var(--lv5); }
+
+/* ── 5M ANALYSIS ── */
+.m5-wrap { grid-column: 2 / 3; }
+.m5-grid { display: flex; flex-direction: column; gap: 6px; }
+.m5-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  border-radius: 6px; padding: 9px 12px;
+  border: 1.5px solid rgba(0,0,0,0.07);
+}
+.m5-badge {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px; font-weight: 700; color: white;
+  padding: 4px 8px; border-radius: 4px; flex-shrink: 0;
+  min-width: 52px; text-align: center; line-height: 1.2;
+}
+.m5-item:nth-child(1) { background: #FEF8EE; }
+.m5-item:nth-child(2) { background: #EEF5FD; }
+.m5-item:nth-child(3) { background: #EEF8EE; }
+.m5-item:nth-child(4) { background: #F8EEFE; }
+.m5-item:nth-child(5) { background: #FEF0EE; }
+.m5-item:nth-child(1) .m5-badge { background: var(--gold); }
+.m5-item:nth-child(2) .m5-badge { background: var(--blue); }
+.m5-item:nth-child(3) .m5-badge { background: var(--green); }
+.m5-item:nth-child(4) .m5-badge { background: var(--purple); }
+.m5-item:nth-child(5) .m5-badge { background: var(--red); }
+.m5-label { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.m5-desc { font-size: 10px; color: #555; line-height: 1.55; }
+
+/* ── FEATURES ── */
+.features-wrap { grid-column: 1 / 2; }
+.feat-list { display: flex; flex-direction: column; gap: 8px; }
+.feat {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 9px 11px; background: #F4F2EF;
+  border-radius: 5px; border-left: 3px solid var(--navy);
+}
+.feat.red  { border-left-color: var(--red);   background: var(--red-lt); }
+.feat.teal { border-left-color: var(--teal);  background: var(--teal-lt); }
+.feat.gold { border-left-color: var(--gold);  background: var(--gold-lt); }
+.feat-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; line-height: 1; }
+.feat-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.feat-desc { font-size: 10px; color: #555; line-height: 1.6; }
+
+/* ── FLOW ── */
+.flow-wrap { grid-column: 2 / 3; }
+.flow-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.flow-step { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 4px; }
+.flow-num {
+  width: 38px; height: 38px; border-radius: 50%;
+  color: white; font-family: 'Oswald', sans-serif;
+  font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1; margin-bottom: 6px;
+  border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.fn1 { background: var(--navy); }
+.fn2 { background: var(--red); }
+.fn3 { background: var(--orange); }
+.flow-steps-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.flow-step-2 { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.flow-num-2 {
+  width: 38px; height: 38px; border-radius: 50%; color: white;
+  font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 6px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.fn4 { background: var(--teal); }
+.fn5 { background: var(--green); }
+.flow-emoji { font-size: 16px; margin-bottom: 3px; }
+.flow-title { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 2px; line-height: 1.35; }
+.flow-desc { font-size: 9.5px; color: #666; line-height: 1.5; }
+
+/* ── BOTTOM ROW ── */
+.bottom-row { grid-column: 1 / 3; display: grid; grid-template-columns: 1.35fr 1fr; gap: 14px; }
+
+/* ── MOCK SCREENS ── */
+.mock-screens {
+  display: flex; gap: 10px; padding: 12px;
+  background: #C0BCBA; border-radius: 6px;
+}
+.phone {
+  flex: 1; background: white; border-radius: 10px;
+  border: 1.5px solid #A8A4A0; overflow: hidden;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.13);
+}
+.phone-hdr {
+  background: var(--navy); padding: 5px 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 7.5px; font-weight: 700; color: white;
+}
+.phone-hdr .ver { color: rgba(255,255,255,0.45); }
+.phone-title-bar {
+  background: var(--red); padding: 5px 8px;
+  text-align: center; font-size: 8px; font-weight: 700; color: white;
+  letter-spacing: 2px;
+}
+.phone-body { padding: 7px 6px; }
+.p-label { font-size: 7px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.p-input {
+  background: #F5F4F2; border: 1px solid #C8C4BC;
+  border-radius: 4px; padding: 4px 6px;
+  font-size: 7px; color: var(--ink); margin-bottom: 4px;
+}
+.p-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; }
+.p-lv-select {
+  background: #FDF0EE; border: 1.5px solid var(--red);
+  border-radius: 4px; padding: 4px 6px;
+  font-size: 7.5px; font-weight: 700; color: var(--red); margin-bottom: 5px;
+  text-align: center;
+}
+.p-vital-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-bottom: 5px; }
+.p-vital {
+  background: #F2F0EE; border-radius: 3px; padding: 3px 4px; text-align: center;
+  border: 1px solid #C8C4BC;
+}
+.p-vital-lbl { font-size: 5.5px; color: #888; }
+.p-vital-val { font-size: 9px; font-weight: 700; font-family: 'Oswald', sans-serif; color: var(--navy); }
+
+/* 5M blocks */
+.p-m5-grid { display: flex; flex-direction: column; gap: 3px; margin-bottom: 5px; }
+.p-m5-item {
+  display: flex; align-items: center; gap: 5px;
+  border-radius: 3px; padding: 4px 6px;
+}
+.p-m5-item:nth-child(1) { background: #FEF8EE; }
+.p-m5-item:nth-child(2) { background: #EEF5FD; }
+.p-m5-item:nth-child(3) { background: #EEF8EE; }
+.p-m5-item:nth-child(4) { background: #F8EEFE; }
+.p-m5-item:nth-child(5) { background: #FEF0EE; }
+.p-m5-tag {
+  font-size: 6px; font-weight: 700; color: white;
+  padding: 1px 5px; border-radius: 2px; flex-shrink: 0;
+}
+.p-m5-item:nth-child(1) .p-m5-tag { background: var(--gold); }
+.p-m5-item:nth-child(2) .p-m5-tag { background: var(--blue); }
+.p-m5-item:nth-child(3) .p-m5-tag { background: var(--green); }
+.p-m5-item:nth-child(4) .p-m5-tag { background: var(--purple); }
+.p-m5-item:nth-child(5) .p-m5-tag { background: var(--red); }
+.p-m5-text { font-size: 6.5px; color: var(--ink); line-height: 1.4; flex: 1; }
+.p-m5-check { font-size: 9px; }
+
+/* record output */
+.p-record {
+  background: #F0F4F8; border: 1px solid #C0C8D0;
+  border-radius: 4px; padding: 6px; font-size: 6.5px;
+  line-height: 1.75; color: #2C2C2C; margin-bottom: 4px;
+}
+.p-record-title {
+  font-size: 7.5px; font-weight: 700; margin-bottom: 4px;
+  padding-left: 4px; border-left: 2.5px solid var(--navy);
+}
+.p-btn-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
+.p-action-btn {
+  border-radius: 4px; padding: 5px 3px;
+  text-align: center; font-size: 6.5px; font-weight: 700; color: white;
+}
+.p-action-btn.copy  { background: var(--teal); }
+.p-action-btn.save  { background: var(--blue); }
+.p-action-btn.print { background: var(--navy); }
+
+/* ── PRICING ── */
+.pricing-card {
+  background: var(--navy); color: white; border-radius: 6px;
+  overflow: hidden; display: flex; flex-direction: column;
+  box-shadow: 0 4px 20px rgba(18,41,74,0.3);
+}
+.pricing-top { padding: 16px 18px 12px; position: relative; overflow: hidden; flex: 1; }
+.pricing-top::after {
+  content: '⚠'; position: absolute; right: 10px; top: 5px;
+  font-size: 90px; opacity: 0.05; pointer-events: none;
+}
+.plan-eyebrow {
+  font-family: 'Oswald', sans-serif; font-size: 10px;
+  letter-spacing: 2.5px; color: #F5A070; margin-bottom: 7px;
+}
+.plan-name { font-size: 19px; font-weight: 900; line-height: 1.25; margin-bottom: 10px; }
+.plan-name span { color: #F5A070; }
+.plan-free-box {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 5px; padding: 8px 11px; margin-bottom: 9px;
+}
+.plan-free-label { font-size: 9px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+.plan-free-val { font-size: 12.5px; font-weight: 700; }
+.plan-free-limit { font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 1px; }
+.plan-paid-box {
+  background: #6A1010; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 5px; padding: 10px 11px; margin-bottom: 10px;
+}
+.plan-paid-label { font-size: 9px; color: rgba(255,255,255,0.8); margin-bottom: 3px; }
+.plan-price { font-family: 'Oswald', sans-serif; font-size: 27px; font-weight: 700; color: white; line-height: 1; }
+.plan-price sub { font-size: 12px; font-family: 'Noto Sans JP', sans-serif; }
+.plan-price sup { font-size: 13px; }
+.plan-price-note { font-size: 9px; color: rgba(255,255,255,0.75); margin-top: 3px; }
+.plan-perks { display: flex; flex-direction: column; gap: 5px; }
+.perk { display: flex; align-items: flex-start; gap: 7px; font-size: 10.5px; color: rgba(255,255,255,0.85); }
+.perk::before { content: '✓'; color: #F5A070; font-weight: 700; flex-shrink: 0; }
+
+/* ── QR BOTTOM ── */
+.pricing-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 12px 18px; display: flex; gap: 12px; align-items: center;
+}
+.qr-canvas-wrap {
+  width: 64px; height: 64px; background: white;
+  border-radius: 5px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; padding: 4px;
+}
+#qr-jiko canvas, #qr-jiko img { width: 56px !important; height: 56px !important; }
+.qr-info { display: flex; flex-direction: column; justify-content: center; }
+.qr-label { font-size: 9px; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+.qr-scan-link {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--red); color: white; text-decoration: none;
+  padding: 8px 13px; border-radius: 5px; margin-bottom: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.qr-scan-link:hover { opacity: 0.85; }
+.qr-scan-icon { font-size: 17px; line-height: 1; }
+.qr-scan-text { font-size: 12.5px; font-weight: 700; color: white; }
+.qr-arrow { font-size: 13px; opacity: 0.75; color: white; }
+.qr-note { font-size: 9px; color: rgba(255,255,255,0.35); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink); color: rgba(255,255,255,0.4);
+  font-size: 9px; text-align: center;
+  padding: 7px 24px; line-height: 1.7; letter-spacing: 0.3px;
+}
+footer strong { color: rgba(255,255,255,0.7); }
+
+@media print { body { width: 210mm; margin: 0; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-stripe"></div>
+  <div class="hdr-body">
+    <div>
+      <div class="hdr-eyebrow">Incident Report &amp; Root Cause Analysis App</div>
+      <div class="hdr-title">事故<span>報告アプリ</span></div>
+      <div class="hdr-sub">スマホでその場で入力。5M分析で原因を掘り下げ、5W1H記録を自動生成。報告業務を最短で完結。</div>
+    </div>
+    <div class="hdr-right">
+      <div class="version-tag">VERSION 1.0</div>
+      <div class="score-badges">
+        <span class="score-badge">事故・ヒヤリハット報告</span>
+        <span class="score-badge">5M原因分析</span>
+        <span class="score-badge">5W1H記録 自動生成</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO BAND -->
+<div class="hero-band">
+  <div class="hero-icon">📋</div>
+  <div class="hero-band-text">
+    <strong>「報告書を書く時間がない」「原因分析が苦手」そのすべてをアプリが解決。現場でその場で完結する事故報告へ。</strong>
+    介護・医療・訪問看護の現場スタッフ ／ 管理者・リスクマネジャー ／ 原因分析スキルを伸ばしたい新人まで
+  </div>
+</div>
+
+<div class="body-wrap">
+
+  <!-- TARGET -->
+  <div class="target-wrap">
+    <div class="card">
+      <div class="sec-title"><span class="dot"></span>こんな現場の「困りごと」を解決します</div>
+      <div class="target-grid">
+        <div class="target-item">
+          <div class="t-emoji">😓</div>
+          <div>
+            <div class="t-head">報告書作成が<em>時間がかかって大変…</em></div>
+            <div class="t-desc">スマホでその場で入力、画像添付も簡単。定型文・5W1H自動生成でゼロから書く手間をなくし、報告業務を最短で完結します。</div>
+          </div>
+        </div>
+        <div class="target-item b">
+          <div class="t-emoji">🔍</div>
+          <div>
+            <div class="t-head">原因分析が<em>なんとなくになってしまう…</em></div>
+            <div class="t-desc">5M（利用者・職員・環境・手順・管理）の観点に沿って入力するだけで体系的な原因分析が完成。使いながら分析力が自然に身につきます。</div>
+          </div>
+        </div>
+        <div class="target-item c">
+          <div class="t-emoji">🌱</div>
+          <div>
+            <div class="t-head">新人スタッフが<em>報告書の書き方を学びたい！</em></div>
+            <div class="t-desc">アプリの入力項目が「何をどう書くか」のガイドになります。影響レベルの基準・5M視点・再発予防策の考え方が実践で身につきます。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL TABLE -->
+  <div class="level-wrap">
+    <div class="card">
+      <div class="sec-title"><span class="dot"></span>影響レベル 7段階分類</div>
+      <div class="level-list">
+        <div class="lv lv0">
+          <div class="lv-badge">Lv.0<br><span style="font-size:8px;">ヒヤリ</span></div>
+          <div class="lv-body">
+            <div>
+              <div class="lv-name">ヒヤリハット</div>
+              <div class="lv-desc">事故に至らなかった事象・気づき</div>
+            </div>
+            <div class="lv-action">記録・共有</div>
+          </div>
+        </div>
+        <div class="lv lv1">
+          <div class="lv-badge">Lv.1</div>
+          <div class="lv-body">
+            <div>
+              <div class="lv-name">レベル 1</div>
+              <div class="lv-desc">患者に影響なし／処置・治療不要</div>
+            </div>
+            <div class="lv-action">記録・報告</div>
+          </div>
+        </div>
+        <div class="lv lv2">
+          <div class="lv-badge">Lv.2</div>
+          <div class="lv-body">
+            <div>
+              <div class="lv-name">レベル 2</div>
+              <div class="lv-desc">軽微な処置・観察強化が必要</div>
+            </div>
+            <div class="lv-action">管理者報告</div>
+          </div>
+        </div>
+        <div class="lv lv3a">
+          <div class="lv-badge">Lv.3a</div>
+          <div class="lv-body">
+            <div>
+              <div class="lv-name">レベル 3a</div>
+              <div class="lv-desc">簡単な治療・追加処置が必要</div>
+            </div>
+            <div class="lv-action">即時報告</div>
+          </div>
+        </div>
+        <div class="lv lv3b">
+          <div class="lv-badge">Lv.3b</div>
+          <div class="lv-body">
+            <div>
+              <div class="lv-name">レベル 3b</div>
+              <div class="lv-desc">高度な治療・入院が必要</div>
+            </div>
+            <div class="lv-action">緊急報告</div>
+          </div>
+        </div>
+        <div class="lv lv4">
+          <div class="lv-badge">Lv.4</div>
+          <div class="lv-body">
+            <div>
+              <div class="lv-name">レベル 4</div>
+              <div class="lv-desc">永続的な障害・機能障害が残る</div>
+            </div>
+            <div class="lv-action">最重要対応</div>
+          </div>
+        </div>
+        <div class="lv lv5">
+          <div class="lv-badge">Lv.5</div>
+          <div class="lv-body">
+            <div>
+              <div class="lv-name">レベル 5</div>
+              <div class="lv-desc">死亡</div>
+            </div>
+            <div class="lv-action">最高度対応</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5M ANALYSIS -->
+  <div class="m5-wrap">
+    <div class="card">
+      <div class="sec-title"><span class="dot"></span>5M分析 ─ 使いながら原因分析力が身につく</div>
+      <div class="m5-grid">
+        <div class="m5-item">
+          <div class="m5-badge">利用者<br>Man</div>
+          <div>
+            <div class="m5-label">利用者側の要因</div>
+            <div class="m5-desc">認知症・身体機能・既往・行動特性など、利用者本人に起因する要因を分析。状態変化の見落としや能力の過大評価を掘り下げます。</div>
+          </div>
+        </div>
+        <div class="m5-item">
+          <div class="m5-badge">職員<br>Man</div>
+          <div>
+            <div class="m5-label">職員側の要因</div>
+            <div class="m5-desc">技術・知識・経験・疲労・思い込みなど、職員に起因する要因を分析。ヒューマンエラーの背景を客観的に捉えます。</div>
+          </div>
+        </div>
+        <div class="m5-item">
+          <div class="m5-badge">環境<br>Machine</div>
+          <div>
+            <div class="m5-label">環境・設備の要因</div>
+            <div class="m5-desc">床・照明・福祉用具・ベッド高さなど、物的・空間的な要因を分析。環境整備で防げる事故を洗い出します。</div>
+          </div>
+        </div>
+        <div class="m5-item">
+          <div class="m5-badge">手順<br>Method</div>
+          <div>
+            <div class="m5-label">手順・方法の要因</div>
+            <div class="m5-desc">マニュアル・手順書・申し送りの不備など、業務プロセスに起因する要因を分析。標準化すべき手順を特定します。</div>
+          </div>
+        </div>
+        <div class="m5-item">
+          <div class="m5-badge">管理<br>Manage</div>
+          <div>
+            <div class="m5-label">管理・体制の要因</div>
+            <div class="m5-desc">人員配置・教育体制・情報共有の仕組みなど、組織・管理側の要因を分析。再発防止策の根本に迫ります。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features-wrap">
+    <div class="card">
+      <div class="sec-title"><span class="dot"></span>主な機能・特徴</div>
+      <div class="feat-list">
+        <div class="feat red">
+          <div class="feat-icon">📱</div>
+          <div>
+            <div class="feat-title">スマホで簡単入力・画像添付も楽々</div>
+            <div class="feat-desc">現場でその場でスマホ入力。ケガの状態・現場写真の添付もタップ一つ。PCに戻る必要なし。</div>
+          </div>
+        </div>
+        <div class="feat red">
+          <div class="feat-icon">✨</div>
+          <div>
+            <div class="feat-title">5W1H記録を自動生成・コピー</div>
+            <div class="feat-desc">入力内容から「いつ・どこで・誰が・何を・なぜ・どのように」の形式で記録を自動生成。コピーしてそのまま電子カルテへ。</div>
+          </div>
+        </div>
+        <div class="feat teal">
+          <div class="feat-icon">🔍</div>
+          <div>
+            <div class="feat-title">5M分析で再発予防策まで一気に完成</div>
+            <div class="feat-desc">原因分析から再発予防策の入力まで業務動線に沿った設計。思考の抜け漏れなく、質の高い報告書が完成します。</div>
+          </div>
+        </div>
+        <div class="feat gold">
+          <div class="feat-icon">🖨️</div>
+          <div>
+            <div class="feat-title">A4印刷・PDF保存・データ保存に対応</div>
+            <div class="feat-desc">報告書をA4フォーマットで印刷・PDF保存。バイタル情報も含めた完全な事故報告書として提出できます。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow-wrap">
+    <div class="card">
+      <div class="sec-title"><span class="dot"></span>使い方 ─ 簡単５ステップ</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-num fn1">1</div>
+          <div class="flow-emoji">👤</div>
+          <div class="flow-title">基本情報・<br>影響レベルを入力</div>
+          <div class="flow-desc">利用者名・区分・発生日時・レベル選択</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num fn2">2</div>
+          <div class="flow-emoji">🩺</div>
+          <div class="flow-title">バイタル・<br>写真を記録</div>
+          <div class="flow-desc">BT・BP・HR・SpO2・現場写真添付</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num fn3">3</div>
+          <div class="flow-emoji">📝</div>
+          <div class="flow-title">発生状況を<br>定型文で入力</div>
+          <div class="flow-desc">定型文マスターからワンタップ挿入</div>
+        </div>
+      </div>
+      <div class="flow-steps-2">
+        <div class="flow-step-2">
+          <div class="flow-num-2 fn4">4</div>
+          <div class="flow-emoji">🔍</div>
+          <div class="flow-title">5M分析＋<br>再発予防策を入力</div>
+          <div class="flow-desc">5観点で原因を整理→対策まで完成</div>
+        </div>
+        <div class="flow-step-2">
+          <div class="flow-num-2 fn5">5</div>
+          <div class="flow-emoji">✨</div>
+          <div class="flow-title">5W1H自動生成・<br>印刷・保存</div>
+          <div class="flow-desc">コピー・A4印刷・PDF保存で完結</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom-row">
+
+    <!-- MOCK SCREENS -->
+    <div class="card">
+      <div class="sec-title"><span class="dot"></span>アプリ画面プレビュー</div>
+      <div class="mock-screens">
+
+        <!-- Screen A: 入力画面 -->
+        <div class="phone">
+          <div class="phone-hdr">
+            <span>📋 事故報告アプリ</span>
+            <span class="ver">v1.0</span>
+          </div>
+          <div class="phone-title-bar">事　故　報　告　書</div>
+          <div class="phone-body">
+            <div class="p-row">
+              <div>
+                <div class="p-label">利用者名</div>
+                <div class="p-input">山田 花子 様</div>
+              </div>
+              <div>
+                <div class="p-label">報告者</div>
+                <div class="p-input">田中 Ns</div>
+              </div>
+            </div>
+            <div class="p-label">発生場所</div>
+            <div class="p-input">302号室 ベッドサイド</div>
+            <div class="p-label">影響レベル</div>
+            <div class="p-lv-select">⚠️ レベル 2 ─ 観察強化・処置が必要</div>
+            <div class="p-label">バイタルサイン</div>
+            <div class="p-vital-row">
+              <div class="p-vital"><div class="p-vital-lbl">BT</div><div class="p-vital-val">36.8</div></div>
+              <div class="p-vital"><div class="p-vital-lbl">BP</div><div class="p-vital-val">136/84</div></div>
+              <div class="p-vital"><div class="p-vital-lbl">HR</div><div class="p-vital-val">88</div></div>
+              <div class="p-vital"><div class="p-vital-lbl">RR</div><div class="p-vital-val">18</div></div>
+              <div class="p-vital"><div class="p-vital-lbl">SpO2</div><div class="p-vital-val">97%</div></div>
+            </div>
+            <div class="p-label">5M原因分析</div>
+            <div class="p-m5-grid">
+              <div class="p-m5-item">
+                <span class="p-m5-tag">利用者</span>
+                <span class="p-m5-text">認知症による衝動的な起き上がり、下肢筋力低下</span>
+                <span class="p-m5-check">✅</span>
+              </div>
+              <div class="p-m5-item">
+                <span class="p-m5-tag">職員</span>
+                <span class="p-m5-text">巡回間隔が長く、離床センサーの確認不足</span>
+                <span class="p-m5-check">✅</span>
+              </div>
+              <div class="p-m5-item">
+                <span class="p-m5-tag">環境</span>
+                <span class="p-m5-text">ベッド柵の配置・夜間照明の不足</span>
+                <span class="p-m5-check">✅</span>
+              </div>
+              <div class="p-m5-item">
+                <span class="p-m5-tag">手順</span>
+                <span class="p-m5-text">転倒リスク高の利用者への巡回ルール未整備</span>
+              </div>
+              <div class="p-m5-item">
+                <span class="p-m5-tag">管理</span>
+                <span class="p-m5-text">リスクアセスメントの定期見直しが未実施</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen B: 自動生成記録 -->
+        <div class="phone">
+          <div class="phone-hdr">
+            <span>✨ 5W1H記録 自動生成</span>
+            <span class="ver">生成済</span>
+          </div>
+          <div class="phone-body" style="padding-top:8px;">
+            <div class="p-record-title">📝 記録転送用（5W1Hまとめ）</div>
+            <div class="p-record">
+              【事故報告書】レベル2<br>
+              <br>
+              When：20XX年X月X日 14:35<br>
+              Where：302号室ベッドサイド<br>
+              Who：山田花子様（要介護3）<br>
+              What：ベッドからの転落<br>
+              Why：離床センサー反応後の対応遅延。認知症による突発的な起き上がり。ベッド柵配置の不備<br>
+              How：右前腕部に軽度擦り傷。BP136/84、HR88、SpO2 97%。バイタル安定。主治医・家族へ報告済み<br>
+              <br>
+              【再発予防策】<br>
+              ・巡回間隔を30分以内に短縮<br>
+              ・ベッド柵配置の見直し<br>
+              ・転倒リスク再アセスメント実施
+            </div>
+            <div class="p-btn-row">
+              <div class="p-action-btn copy">📋 コピー</div>
+              <div class="p-action-btn save">💾 保存</div>
+              <div class="p-action-btn print">🖨️ 印刷</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="pricing-card">
+      <div class="pricing-top">
+        <div class="plan-eyebrow">SUBSCRIPTION PLAN</div>
+        <div class="plan-name">解除コードで<br><span>フル機能</span>を開放</div>
+
+        <div class="plan-free-box">
+          <div class="plan-free-label">🆓 無料プラン（まずは試す）</div>
+          <div class="plan-free-val">基本機能をすぐ使える</div>
+          <div class="plan-free-limit">報告書作成・5M分析・記録生成が使えます</div>
+        </div>
+
+        <div class="plan-paid-box">
+          <div class="plan-paid-label">⭐ 有料プラン（解除コード）</div>
+          <div class="plan-price"><sup>¥</sup>———<sub>/月</sub></div>
+          <div class="plan-price-note">印刷・PDF保存 無制限 ／ 全機能開放</div>
+        </div>
+
+        <div class="plan-perks">
+          <div class="perk">A4印刷・PDF保存が無制限に</div>
+          <div class="perk">定型文マスターのカスタマイズ・登録</div>
+          <div class="perk">5M分析・再発予防策の記録保存</div>
+          <div class="perk">現場写真の添付・保存に対応</div>
+          <div class="perk">インストール不要・ブラウザで動く</div>
+        </div>
+      </div>
+
+      <div class="pricing-bottom">
+        <div class="qr-canvas-wrap">
+          <div id="qr-jiko"></div>
+        </div>
+        <div class="qr-info">
+          <div class="qr-label">QRコードを読み取ってアクセス</div>
+          <a href="https://tacchibanana.github.io/JIKO-V2/" target="_blank" class="qr-scan-link">
+            <span class="qr-scan-icon">📲</span>
+            <span class="qr-scan-text">今すぐ無料で試す</span>
+            <span class="qr-arrow">→</span>
+          </a>
+          <div class="qr-note">© 2026 ONMUSUBI / TACCHIBANANA</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>事故報告アプリ（報告アプリ Tacchibanana V1.0）</strong>　｜　介護・医療現場向けインシデント管理ツール　｜　© 2026 ONMUSUBI / TACCHIBANANA
+  <br>本ツールは報告書作成の補助ツールです。施設の報告フロー・管理規程に従いご使用ください。個人情報の取り扱いは各施設のルールに準拠してください。
+</footer>
+
+<script>
+  new QRCode(document.getElementById("qr-jiko"), {
+    text: "https://tacchibanana.github.io/JIKO-V2/",
+    width: 56,
+    height: 56,
+    colorDark: "#1A2840",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.M
+  });
+</script>
+</body>
+</html>
